@@ -1,3 +1,4 @@
+import { Link } from "expo-router";
 import { useEffect, useState } from "react";
 import { Image, ScrollView, StyleSheet, Text, View } from "react-native";
 
@@ -60,6 +61,7 @@ export default function Index() {
           const details = await res.json();
           return {
             name: pokemon.name,
+            url: pokemon.url,
             image: details.sprites.front_default, // Main sprite
             imageBack: details.sprites.back_default,
             types: details.types,
@@ -80,19 +82,33 @@ export default function Index() {
       }}
     >
       {pokemons.map((pokemon) => (
-        <View
+        <Link
           key={pokemon.name}
+          href={{
+            pathname: "/(screens)/details",
+            params: { pokemonUrl: pokemon.url },
+          }}
           style={{
             backgroundColor: colorsByType[pokemon.types[0].type.name],
+            borderRadius: 15,
+            padding: 10,
           }}
         >
-          <Text style={styles.name}>{pokemon.name}</Text>
-          <Text style={styles.type}>{pokemon.types[0].type.name}</Text>
-          <View style={{ flex: 1, flexDirection: "row" }}>
-            <Image source={{ uri: pokemon.image }} style={styles.image} />
-            <Image source={{ uri: pokemon.imageBack }} style={styles.image} />
+          <View>
+            <Text style={styles.name}>{pokemon.name}</Text>
+            <Text style={styles.type}>{pokemon.types[0].type.name}</Text>
+            <View
+              style={{
+                flex: 1,
+                flexDirection: "row",
+                justifyContent: "center",
+              }}
+            >
+              <Image source={{ uri: pokemon.image }} style={styles.image} />
+              <Image source={{ uri: pokemon.imageBack }} style={styles.image} />
+            </View>
           </View>
-        </View>
+        </Link>
       ))}
     </ScrollView>
   );
@@ -102,11 +118,13 @@ const styles = StyleSheet.create({
   name: {
     fontSize: 20,
     fontWeight: "bold",
+    textAlign: "center",
   },
   type: {
     fontSize: 15,
     fontWeight: "bold",
     color: "grey",
+    textAlign: "center",
   },
   image: {
     width: 150,
